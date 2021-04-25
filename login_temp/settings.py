@@ -76,11 +76,11 @@ WSGI_APPLICATION = 'login_temp.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'django_three',
-        'HOST': 'up to you',
-        'port': 'up to you',
-        'USER': 'up to you',
-        'PASSWORD': 'up to you',
+        'NAME': 'visualRoad',
+        'HOST': 'localhost',
+        'port': 3306,
+        'USER': 'root',
+        'PASSWORD': 'chenci990716',
     }
 }
 
@@ -122,8 +122,8 @@ STATIC_URL = '/static/'
 
 #邮件配置
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.sina.com'
+EMAIL_HOST = 'smtp.qq.com'
 EMAIL_PORT = 25
-EMAIL_HOST_USER = 'up to you'
-EMAIL_HOST_PASSWORD = 'up to you'
+EMAIL_HOST_USER = '1746189245@qq.com'
+EMAIL_HOST_PASSWORD = 'pqdykvbuaaspdebj'
 CONFIRM_DAYS=7

@@ -7,8 +7,8 @@ import hashlib
 import datetime
 from django.conf import settings
 
-def send_email(email, code):
 
+def send_email(email, code):
     from django.core.mail import EmailMultiAlternatives
 
     subject = '来自www.yldatomic.cn的注册确认邮件'
@@ -18,7 +18,7 @@ def send_email(email, code):
 
     html_content = '''
                     <p>感谢注册<a href="http://{}/confirm/?code={}" target=blank>www.yldatomic.cn</a>，\
-                    这里是刘江的博客和教程站点，专注于Python、Django和机器学习技术的分享！</p>
+                    这里是博客和教程站点，专注于Python、Django和机器学习技术的分享！</p>
                     <p>请点击站点链接完成注册确认！</p>
                     <p>此链接有效期为{}天！</p>
                     '''.format('127.0.0.1:8000', code, settings.CONFIRM_DAYS)
@@ -27,32 +27,36 @@ def send_email(email, code):
     msg.attach_alternative(html_content, "text/html")
     msg.send()
 
+
 def make_confirm_string(user):
     now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     code = hash_code(user.name, now)
-    models.ConfirmString.objects.create(code=code, user=user,)
+    models.ConfirmString.objects.create(code=code, user=user, )
     return code
 
-def hash_code(s, salt='mysite'):# 加点盐
+
+def hash_code(s, salt='mysite'):  # 加点盐
     h = hashlib.sha256()
     s += salt
     h.update(s.encode())  # update方法只接收bytes类型
     return h.hexdigest()
+
 
 def index(request):
     if not request.session.get('is_login', None):
         return redirect('/login/')
     return render(request, 'login/index.html')
 
+
 def login(request):
-    if request.session.get('is_login',None):
+    if request.session.get('is_login', None):
         return redirect('/index/')
-    if request.method=="POST":
-        login_form=forms.UserForm(request.POST)
-        message='请检查填写的内容！'
+    if request.method == "POST":
+        login_form = forms.UserForm(request.POST)
+        message = '请检查填写的内容！'
         if login_form.is_valid():  # 确保用户名和密码都不为空
-            username=login_form.cleaned_data.get('username')
-            password=login_form.cleaned_data.get('password')
+            username = login_form.cleaned_data.get('username')
+            password = login_form.cleaned_data.get('password')
 
             # 用户名字符合法性验证
             # 密码长度验证
@@ -60,9 +64,9 @@ def login(request):
             try:
                 user = models.User.objects.get(name=username)
             except:
-                message='用户不存在！'
+                message = '用户不存在！'
                 print(login_form.cleaned_data.get('username'))
-                return render(request, 'login/login.html',locals())
+                return render(request, 'login/login.html', locals())
 
             if not user.has_confirmed:
                 message = '该用户还未经过邮件确认！'
@@ -74,12 +78,12 @@ def login(request):
                 request.session['user_name'] = user.name
                 return redirect('/index/')
             else:
-                message='密码不正确!'
-                return render(request,'login/login.html',locals())
+                message = '密码不正确!'
+                return render(request, 'login/login.html', locals())
         else:
-            return render(request,'login/login.html',locals())
+            return render(request, 'login/login.html', locals())
     login_form = forms.UserForm()
-    return render(request,'login/login.html',locals())
+    return render(request, 'login/login.html', locals())
 
 
 def register(request):
@@ -125,6 +129,7 @@ def register(request):
     register_form = forms.RegisterForm()
     return render(request, 'login/register.html', locals())
 
+
 def logout(request):
     if not request.session.get('is_login', None):
         # 如果本来就未登录，也就没有登出一说
@@ -135,6 +140,7 @@ def logout(request):
     # del request.session['user_id']
     # del request.session['user_name']
     return redirect('/login/')
+
 
 def user_confirm(request):
     code = request.GET.get('code', None)
